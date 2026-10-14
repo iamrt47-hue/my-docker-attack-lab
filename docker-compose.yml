@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web_target:
+    image: wordpress:5.7
+    container_name: corporate-web-portal
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db_target:3306
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: WeakPassword123!
+    networks:
+      - internal_attack_network
+
+  db_target:
+    image: mysql:5.7
+    container_name: backend-database
+    environment:
+      MYSQL_ROOT_PASSWORD: WeakPassword123!
+      MYSQL_DATABASE: corporate_records
+    networks:
+      - internal_attack_network
+
+  attacker_station:
+    image: kalilinux/kali-rolling:latest
+    container_name: redteam-attacker-pod
+    command: /bin/sh -c "while true; do sleep 30; done"
+    networks:
+      - internal_attack_network
+
+networks:
+  internal_attack_network:
+    driver: bridge
