@@ -10,26 +10,38 @@ This repository leverages Infrastructure as Code (IaC) via Docker Compose to sta
 
 ---
 
-### 2. Infrastructure Validation Phase (Technical Metrics) / インフレ検証フェーズ（テクニカルメトリクス）
+### 2. Infrastructure Validation Phase (Technical Metrics) / インフラ検証フェーズ
 A baseline active service and banner-version enumeration scan was executed directly from the offensive security node to map the application perimeter topology.
 
 アプリケーション外周トポロジーをマッピングするため、攻撃検証用ノードからアクティブサービスおよびバナーバージョンの列挙スキャンを実施しました。
 
 #### Network Sweep Log Readout / ネットワークスキャンログ出力:
 *   **Target Named Host (対象ホスト名):** `corporate-web-portal`
-*   **Resolved Target IP Profile (解決済み対象IP):** `172.18.0.3`
+*   **Resolved Target IP Profile (解決済み対象IP):** `172.18.0.2`
 *   **Active Open Ingress Points (有効なオープンポート):** `Port 80/tcp`
 *   **Discovered Core Service Layer (検出されたコアサービス層):** `Apache httpd 2.4.38 (Debian Linux)`
 
 ---
 
-### 3. Engineering Remediation Matrix (Japan Market Regulatory Baseline) / 脆弱性是正処置マトリクス（日本国内法規制・業界標準ベースライン基準）
+### 3. Automated Security Tooling Execution / 自動化スクリプト実行手順（採用担当者・技術担当者向け）
+To demonstrate continuous security validation and automation capabilities, this sandbox features a custom Python reconnaissance framework (`auto_recon.py`) that programmatically maps target configurations and flags architecture flaws.
 
-| Discovered Architectural Flaw <br> (検出された設計上の欠陥) | Operational & Security Impact <br> (セキュリティ面における想定影響) | Structural Engineering Remediation <br> (アーキテクチャ是正処置) |
-| :--- | :--- | :--- |
-| **Legacy & Vulnerable Component Tags** | The detected Apache 2.4.38 layer contains severe known vulnerabilities (CVEs). | Modify the orchestration template to pin deployments strictly to modern, long-term support (LTS) base configurations. |
-| **Flat Internal Network Topology** | Unrestricted lateral movement paths exist between the public ingress node and the backend storage node. | Implement multi-tier network segregation by creating distinct web-facing and database-facing network blocks inside the compose script. |
-| **Plaintext Credential Exposures** | Root database passwords are hardcoded within standard environment string fields. | Re-engineer the environment to map configurations using secure Docker Secrets or run-time environment variables. |
+本サンドボックス内には、継続的セキュリティ検証の自動化を実証するため、ターゲット環境の設定を自動マッピングして設計上の欠陥を検出するカスタムPythonフレームワーク（`auto_recon.py`）が組み込まれています。
+
+#### How to Run the Script / スクリプトの実行手順:
+Technical evaluators can execute the target infrastructure validation scan directly from the running attacker pod node by copying the following sequence:
+
+技術担当者および採用担当者の方は、以下のコマンドシーケンスをターミナルにコピー＆ペーストすることで、稼働中の攻撃用コンテナノード内から直接インフラ検証スキャンを実行できます。
+
+```bash
+# 1. Step straight inside the active offensive security container node
+# 稼働中の攻撃検証用コンテナ（Kali Linux環境）のシェルに入る
+docker exec -it redteam-attacker-pod bash
+
+# 2. Run the automated Python infrastructure scanner targeting node 172.18.0.2
+# ターゲットノード (172.18.0.2) を対象とした自動インフラ検証スクリプトを実行
+python3 auto_recon.py
+```
 
 ---
 
